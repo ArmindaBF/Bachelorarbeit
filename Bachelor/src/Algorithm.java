@@ -38,30 +38,47 @@ public class Algorithm {
             listOfFlights.removeIf(s -> s.instanceNummer != this.instance);
             //flights are coming
             LinkedList<SortingStation> list2 = new LinkedList<SortingStation>(this.listOfStation);
-            for (Flight f : listOfFlights) {
+            for (Flight aFlight : listOfFlights) {
                 //get sorting station only with same pierId
                 List<SortingStation> onlyRelevantPiers = list2.stream()
-                        .filter(p -> p.pierId == f.pierId).collect(Collectors.toList());
+                        .filter(p -> p.pierId == aFlight.pierId).collect(Collectors.toList());
                 //get only free stations
                 List<SortingStation> notOccuoied = onlyRelevantPiers.stream().filter(p -> !p.occupied).collect(Collectors.toList());
-                if(notOccuoied.size()!=0){
+                if (notOccuoied.size() != 0) {
                     int id = notOccuoied.get(0).id;
-                    if (findStationById(id) != null) {
-                        findStationById(id).occupied = true;
-                        System.out.println(f.id + " took  station \t" + findStationById(id).id + " in pier\t" + f.pierId);
-                    } else {
 
+                    findStationById(id).occupied = true;
+                    long timeToDepack = aFlight.stt.getTime() - aFlight.est.getTime();
 
-                        //there is no more free station in pier -> look for all free station
-                        List<SortingStation> allFreeStation = list2.stream()
-                                .filter(p -> !p.occupied).collect(Collectors.toList());
-
-                        int id2 = notOccuoied.get(0).id;
-                        if (findStationById(id2) != null) {
-                            findStationById(id2).occupied = true;
-                            System.out.println(f.id + " took  station \t" + findStationById(id).id + " in pier\t" + findStationById(id).id);
-                        }
+                    findStationById(id).runCounter(5);//the Thread wir erzeugt mit secunden time. Danach wird station wieder frei
+                    /////////LOG INFORMATION//////
+                    System.out.println("\n" + aFlight.id + " took  station \t" + findStationById(id).id + " in pier\t" + aFlight.pierId);
+                    System.out.print(" Occupied:\t");
+                    for (SortingStation s : listOfStation.stream().filter(p -> p.occupied).collect(Collectors.toList())) {
+                        System.out.print(s + " ");
                     }
+                    /////////LOG INFORMATION//////
+                    continue;
+                }
+                //there is no more free station in pier -> look for all free station
+                List<SortingStation> allFreeStation = list2.stream()
+                        .filter(p -> !p.occupied).collect(Collectors.toList());
+
+                int id2 = allFreeStation.get(0).id;
+                if (findStationById(id2) != null) {
+                    findStationById(id2).occupied = true;
+                    long timeToDepack = aFlight.stt.getTime() - aFlight.est.getTime();
+                    findStationById(id2).runCounter(5);
+
+                    /////////LOG INFORMATION//////
+                    System.out.println("\n" + aFlight.id + " took  station \t" + findStationById(id2).id + " in pier\t" + findStationById(id2).id);
+                    System.out.print(" Occupied:\t");
+                    for (SortingStation s : listOfStation.stream().filter(p -> p.occupied).collect(Collectors.toList())) {
+                        System.out.print(s + " ");
+                    }
+                    System.out.print("\n");
+                    /////////LOG INFORMATION//////
+                    continue;
                 }
 
 

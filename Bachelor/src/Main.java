@@ -39,8 +39,8 @@ public class Main {
                 Time tj = new Time(new SimpleDateFormat("HH:mm").parse(e[48]).getTime());
                 Double x = Double.valueOf(e[54]);
                 Double y = Double.valueOf(e[55]);
-                Random random= new Random();
-                Flight aFlight = new Flight(instanceNummer, id, outbound, datum, est, stt_est, lst_est, lst, stt_lst, stt,tj, x, y,random.nextInt(10));
+                Random random = new Random();
+                Flight aFlight = new Flight(instanceNummer, id, outbound, datum, est, stt_est, lst_est, lst, stt_lst, stt, tj, x, y,Integer.valueOf(e[58]));
                 this.listOfFlight.add(aFlight);
 
                 //System.out.println(aLine);
@@ -51,27 +51,26 @@ public class Main {
                 double x = Double.valueOf(e[3]);
                 double y = Double.valueOf(e[4]);
                 Random random = new Random();
-                SortingStation aStation = new SortingStation(id, x, y,random.nextInt(10));
+                SortingStation aStation = new SortingStation(id, x, y, Integer.valueOf(e[9]));
                 this.listOfSortingStations.add(aStation);
 
             }
             ArrayList<Pier> piers = new ArrayList<>();
-            ArrayList<Integer> pierIds= new ArrayList<Integer>();
-            for (SortingStation s : listOfSortingStations){
-                if(pierIds.contains(s.pierId)){
+            ArrayList<Integer> pierIds = new ArrayList<Integer>();
+            for (SortingStation s : listOfSortingStations) {
+                if (pierIds.contains(s.pierId)) {
 
-                }else{
+                } else {
                     pierIds.add(s.pierId);
                 }
             }
-            for (int i :pierIds ){
-                piers.add(new Pier(i));
-            }
-            for (SortingStation s : listOfSortingStations) {
-                Pier p = piers.f
+            for(int i:pierIds){
+                listOfPier.add(new Pier(i));
             }
 
-            } catch (Exception e) {
+            System.out.print(2);
+
+        } catch (Exception e) {
             e.fillInStackTrace();
         }
     }
@@ -80,9 +79,8 @@ public class Main {
         Main m = new Main();
         m.readFromFileStationAndFlights();
         int instance = 3;
-        Algorithm algorithms = new Algorithm(m.listOfSortingStations,m.listOfFlight,instance);
-        ArrayList<Result> result =algorithms.algorithmA(Algorithm.FlightOrderingMethod.OST);
-
+        Algorithm algorithms = new Algorithm(m.listOfSortingStations, m.listOfFlight,m.listOfPier, instance);
+        ArrayList<Result> result = algorithms.algorithmA(Algorithm.FlightOrderingMethod.OST);
 
 
         System.out.print(2);

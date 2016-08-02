@@ -6,6 +6,7 @@ public class SortingStation {
     public double x;
     public double y;
     public int pierId;
+    public boolean occupied;
 
 
     public SortingStation(int id, double x, double y,int pierId) {
@@ -13,5 +14,7 @@ public class SortingStation {
         this.x = x;
         this.y = y;
         this.pierId = pierId;
+        this.occupied=false;
     }
+
 }

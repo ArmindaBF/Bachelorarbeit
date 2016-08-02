@@ -16,8 +16,8 @@ public class Main {
 
 
     public void readFromFileStationAndFlights() {
-        File file = new File("/home/vladimir/test/2/Bachelorarbeit/Bachelor/Flights.csv");
-        File file2 = new File("/home/vladimir/test/2/Bachelorarbeit/Bachelor/SortingStations.csv");
+        File file = new File("C:\\Users\\Usuario\\Documents\\Bachelorarbeit\\Bachelor\\Flights.csv");
+        File file2 = new File("C:\\Users\\Usuario\\Documents\\Bachelorarbeit\\Bachelor\\SortingStations.csv");
         try {
             List<String> l = FileUtils.readLines(file, "UTF-8");
             List<String> l2 = FileUtils.readLines(file2, "UTF-8");

@@ -3,10 +3,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Timer;
 
-/**
- * Created by vladimir on 8/2/16.
- */
 
+//definicion de las flugeigenschaften
 public class Flight {
 
     public int instanceNummer;
@@ -25,6 +23,7 @@ public class Flight {
     public double Y;
 
 
+    //constructor para los flights
     public Flight(int instanceNummer, int id,
                   String outbound,
                   Date datum,

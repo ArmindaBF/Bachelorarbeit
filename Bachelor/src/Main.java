@@ -1,10 +1,6 @@
-import jdk.nashorn.internal.runtime.ListAdapter;
 import org.apache.commons.io.FileUtils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,6 +9,7 @@ import java.util.List;
 import java.util.Random;
 
 public class Main {
+    public static final int INSTANCE = 8;
     ArrayList<SortingStation> listOfSortingStations = new ArrayList<SortingStation>();
     ArrayList<Flight> listOfFlight = new ArrayList<Flight>();
     ArrayList<Pier> listOfPier = new ArrayList<Pier>();
@@ -21,11 +18,11 @@ public class Main {
     public void readFromFileStationAndFlights() {
 
         File file = new File("C:\\Users\\Usuario\\Documents\\Bachelorarbeit\\Bachelor\\Flights.csv");
-        File file2 = new File("C:\\Users\\Usuario\\Documents\\Bachelorarbeit\\Bachelor\\SortingStations.csv");
+        File file2 = new File("C:\\Users\\Usuario\\Documents\\Bachelorarbeit\\Bachelor\\SortingStation.csv");
         try {
             List<String> l = FileUtils.readLines(file, "UTF-8");
             List<String> l2 = FileUtils.readLines(file2, "UTF-8");
-           // System.out.println("Hello World! gfhgfhgfhd");
+            // System.out.println("Hello World! gfhgfhgfhd");
 
             //separa la lista de ; a lista einzeln
             //convierte los string en el format que necesitamos
@@ -46,12 +43,12 @@ public class Main {
                 Double x = Double.valueOf(e[54]);
                 Double y = Double.valueOf(e[55]);
                 Random random = new Random();
-                Flight aFlight = new Flight(instanceNummer, id, outbound, datum, est, stt_est, lst_est, lst, stt_lst, stt, tj, x, y,Integer.valueOf(e[58]));
+                Flight aFlight = new Flight(instanceNummer, id, outbound, datum, est, stt_est, lst_est, lst, stt_lst, stt, tj, x, y, Integer.valueOf(e[58]));
                 this.listOfFlight.add(aFlight);
 
                 //System.out.println(aLine);
             }
-            System.out.println("flights recorded: "+this.listOfFlight.size());
+            System.out.println("flights recorded: " + this.listOfFlight.size());
 
             //hace lo mismo que arriba para los flights pero para las SS
             for (String aLine : l2) {
@@ -64,6 +61,7 @@ public class Main {
                 this.listOfSortingStations.add(aStation);
 
             }
+            System.out.println("available stations: " + this.listOfSortingStations.size());
             //Lista para los Pierid
             ArrayList<Pier> piers = new ArrayList<>();
             ArrayList<Integer> pierIds = new ArrayList<Integer>();
@@ -72,22 +70,22 @@ public class Main {
                     pierIds.add(s.pierId);
                 }
             }
-            for(int i : pierIds){
+            for (int i : pierIds) {
                 listOfPier.add(new Pier(i));
             }
 
-         //   System.out.print(2);
+            //   System.out.print(2);
 
         } catch (Exception e) {
             e.printStackTrace();
             e.fillInStackTrace();
         }
     }
+
     //Main
     public static void main(String[] args) {
         Main m = new Main();
         m.readFromFileStationAndFlights();
-        int instance = 3;
 
         PrintStream out = null;
         try {
@@ -97,30 +95,236 @@ public class Main {
         }
         System.setOut(out);
 
-        Algorithm algorithms = new Algorithm(m.listOfSortingStations, m.listOfFlight,m.listOfPier, instance);
-        ArrayList<Result> result1 = algorithms.algorithmA(Algorithm.FlightOrderingMethod.OST, "FIFO");
-        ArrayList<Result> result2 = algorithms.algorithmA(Algorithm.FlightOrderingMethod.OST, "LIFO");
-        ArrayList<Result> result3 = algorithms.algorithmA(Algorithm.FlightOrderingMethod.OST, "DISTANCE");
-        ArrayList<Result> result4 = algorithms.algorithmA(Algorithm.FlightOrderingMethod.ODT, "FIFO");
-        ArrayList<Result> result5 = algorithms.algorithmA(Algorithm.FlightOrderingMethod.ODT, "LIFO");
-        ArrayList<Result> result6 = algorithms.algorithmA(Algorithm.FlightOrderingMethod.ODT, "DISTANCE");
+        try {
 
-        ArrayList<Result> result7 = algorithms.algorithmB(Algorithm.FlightOrderingMethod.OST, "FIFO");
-        ArrayList<Result> result8 = algorithms.algorithmB(Algorithm.FlightOrderingMethod.OST, "LIFO");
-        ArrayList<Result> result9 = algorithms.algorithmB(Algorithm.FlightOrderingMethod.OST, "DISTANCE");
-        ArrayList<Result> result10 = algorithms.algorithmB(Algorithm.FlightOrderingMethod.ODT, "FIFO");
-        ArrayList<Result> result11 = algorithms.algorithmB(Algorithm.FlightOrderingMethod.ODT, "LIFO");
-        ArrayList<Result> result12 = algorithms.algorithmB(Algorithm.FlightOrderingMethod.ODT, "DISTANCE");
+            Algorithm algorithms = new Algorithm(m.listOfSortingStations, m.listOfFlight, m.listOfPier, INSTANCE);
+            algorithms.setWriter(getBufferedWriter("AlgorithmA", "OST", "FIFO"));
+            algorithms.algorithmA(Algorithm.FlightOrderingMethod.OST, "FIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmA", "OST", "LIFO"));
+            algorithms.algorithmA(Algorithm.FlightOrderingMethod.OST, "LIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmA", "OST", "DISTANCE"));
+            algorithms.algorithmA(Algorithm.FlightOrderingMethod.OST, "DISTANCE");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmA", "ODT", "FIFO"));
+            algorithms.algorithmA(Algorithm.FlightOrderingMethod.ODT, "FIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmA", "ODT", "LIFO"));
+            algorithms.algorithmA(Algorithm.FlightOrderingMethod.ODT, "LIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmA", "ODT", "DISTANCE"));
+            algorithms.algorithmA(Algorithm.FlightOrderingMethod.ODT, "DISTANCE");
+            algorithms.getWriter().close();
+            
+            
+            algorithms.setWriter(getBufferedWriter("AlgorithmB", "OST", "FIFO"));
+            algorithms.algorithmB(Algorithm.FlightOrderingMethod.OST, "FIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmB", "OST", "LIFO"));
+            algorithms.algorithmB(Algorithm.FlightOrderingMethod.OST, "LIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmB", "OST", "DISTANCE"));
+            algorithms.algorithmB(Algorithm.FlightOrderingMethod.OST, "DISTANCE");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmB", "ODT", "FIFO"));
+            algorithms.algorithmB(Algorithm.FlightOrderingMethod.ODT, "FIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmB", "ODT", "LIFO"));
+            algorithms.algorithmB(Algorithm.FlightOrderingMethod.ODT, "LIFO");     
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmB", "ODT", "DISTANCE"));
+            algorithms.algorithmB(Algorithm.FlightOrderingMethod.ODT, "DISTANCE");
+            algorithms.getWriter().close();
+            
+            algorithms.setWriter(getBufferedWriter("AlgorithmC", "OST", "FIFO"));
+            algorithms.algorithmC(Algorithm.FlightOrderingMethod.OST, "FIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmC", "OST", "LIFO"));
+            algorithms.algorithmC(Algorithm.FlightOrderingMethod.OST, "LIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmC", "OST", "DISTANCE"));
+            algorithms.algorithmC(Algorithm.FlightOrderingMethod.OST, "DISTANCE");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmC", "ODT", "FIFO"));
+            algorithms.algorithmC(Algorithm.FlightOrderingMethod.ODT, "FIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmC", "ODT", "LIFO"));
+            algorithms.algorithmC(Algorithm.FlightOrderingMethod.ODT, "LIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmC", "ODT", "DISTANCE"));
+            algorithms.algorithmC(Algorithm.FlightOrderingMethod.ODT, "DISTANCE");
+            algorithms.getWriter().close();
 
-        ArrayList<Result> result13 = algorithms.algorithmC(Algorithm.FlightOrderingMethod.OST, "FIFO");
-        ArrayList<Result> result14= algorithms.algorithmC(Algorithm.FlightOrderingMethod.OST, "LIFO");
-        ArrayList<Result> result15= algorithms.algorithmC(Algorithm.FlightOrderingMethod.OST, "DISTANCE");
-        ArrayList<Result> result16 = algorithms.algorithmC(Algorithm.FlightOrderingMethod.ODT, "FIFO");
-        ArrayList<Result> result17 = algorithms.algorithmC(Algorithm.FlightOrderingMethod.ODT, "LIFO");
-        ArrayList<Result> result18 = algorithms.algorithmC(Algorithm.FlightOrderingMethod.ODT, "DISTANCE");
 
+            
+            algorithms.setWriter(getBufferedWriter("AlgorithmD", "OST", "FIFO"));
+            algorithms.algorithmD(Algorithm.FlightOrderingMethod.OST, "FIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmD", "OST", "LIFO"));
+            algorithms.algorithmD(Algorithm.FlightOrderingMethod.OST, "LIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmD", "OST", "DISTANCE"));
+            algorithms.algorithmD(Algorithm.FlightOrderingMethod.OST, "DISTANCE");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmD", "ODT", "FIFO"));
+            algorithms.algorithmD(Algorithm.FlightOrderingMethod.ODT, "FIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmD", "ODT", "LIFO"));
+            algorithms.algorithmD(Algorithm.FlightOrderingMethod.ODT, "LIFO");     
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmD", "ODT", "DISTANCE"));
+            algorithms.algorithmD(Algorithm.FlightOrderingMethod.ODT, "DISTANCE");
+            algorithms.getWriter().close();
+
+
+            algorithms.setWriter(getBufferedWriter("AlgorithmE", "OST", "FIFO"));
+            algorithms.algorithmE(Algorithm.FlightOrderingMethod.OST, "FIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmE", "OST", "LIFO"));
+            algorithms.algorithmE(Algorithm.FlightOrderingMethod.OST, "LIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmE", "OST", "DISTANCE"));
+            algorithms.algorithmE(Algorithm.FlightOrderingMethod.OST, "DISTANCE");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmE", "ODT", "FIFO"));
+            algorithms.algorithmE(Algorithm.FlightOrderingMethod.ODT, "FIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmE", "ODT", "LIFO"));
+            algorithms.algorithmE(Algorithm.FlightOrderingMethod.ODT, "LIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmE", "ODT", "DISTANCE"));
+            algorithms.algorithmE(Algorithm.FlightOrderingMethod.ODT, "DISTANCE");
+            algorithms.getWriter().close();
+
+            algorithms.setWriter(getBufferedWriter("algorithmA-2", "OST", "FIFO"));
+            algorithms.algorithmAwithoutReduction(Algorithm.FlightOrderingMethod.OST, "FIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("algorithmA-2", "OST", "LIFO"));
+            algorithms.algorithmAwithoutReduction(Algorithm.FlightOrderingMethod.OST, "LIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("algorithmA-2", "OST", "DISTANCE"));
+            algorithms.algorithmAwithoutReduction(Algorithm.FlightOrderingMethod.OST, "DISTANCE");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("algorithmA-2", "ODT", "FIFO"));
+            algorithms.algorithmAwithoutReduction(Algorithm.FlightOrderingMethod.ODT, "FIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("algorithmA-2", "ODT", "LIFO"));
+            algorithms.algorithmAwithoutReduction(Algorithm.FlightOrderingMethod.ODT, "LIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("algorithmA-2", "ODT", "DISTANCE"));
+            algorithms.algorithmAwithoutReduction(Algorithm.FlightOrderingMethod.ODT, "DISTANCE");
+            algorithms.getWriter().close();
+
+            algorithms.setWriter(getBufferedWriter("algorithmB-2", "OST", "FIFO"));
+            algorithms.algorithmBwithoutReduction(Algorithm.FlightOrderingMethod.OST, "FIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("algorithmB-2", "OST", "LIFO"));
+            algorithms.algorithmBwithoutReduction(Algorithm.FlightOrderingMethod.OST, "LIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("algorithmB-2", "OST", "DISTANCE"));
+            algorithms.algorithmBwithoutReduction(Algorithm.FlightOrderingMethod.OST, "DISTANCE");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("algorithmB-2", "ODT", "FIFO"));
+            algorithms.algorithmBwithoutReduction(Algorithm.FlightOrderingMethod.ODT, "FIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("algorithmB-2", "ODT", "LIFO"));
+            algorithms.algorithmBwithoutReduction(Algorithm.FlightOrderingMethod.ODT, "LIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("algorithmB-2", "ODT", "DISTANCE"));
+            algorithms.algorithmBwithoutReduction(Algorithm.FlightOrderingMethod.ODT, "DISTANCE");
+            algorithms.getWriter().close();
+
+            algorithms.setWriter(getBufferedWriter("algorithmC-2", "OST", "FIFO"));
+            algorithms.algorithmCwithoutReduction(Algorithm.FlightOrderingMethod.OST, "FIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("algorithmC-2", "OST", "LIFO"));
+            algorithms.algorithmCwithoutReduction(Algorithm.FlightOrderingMethod.OST, "LIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("algorithmC-2", "OST", "DISTANCE"));
+            algorithms.algorithmCwithoutReduction(Algorithm.FlightOrderingMethod.OST, "DISTANCE");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("algorithmC-2", "ODT", "FIFO"));
+            algorithms.algorithmCwithoutReduction(Algorithm.FlightOrderingMethod.ODT, "FIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("algorithmC-2", "ODT", "LIFO"));
+            algorithms.algorithmCwithoutReduction(Algorithm.FlightOrderingMethod.ODT, "LIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("algorithmC-2", "ODT", "DISTANCE"));
+            algorithms.algorithmCwithoutReduction(Algorithm.FlightOrderingMethod.ODT, "DISTANCE");
+            algorithms.getWriter().close();
+
+
+            algorithms.setWriter(getBufferedWriter("AlgorithmA-3", "OST", "FIFO"));
+            algorithms.algorithmAwithReduction(Algorithm.FlightOrderingMethod.OST, "FIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmA-3", "OST", "LIFO"));
+            algorithms.algorithmAwithReduction(Algorithm.FlightOrderingMethod.OST, "LIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmA-3", "OST", "DISTANCE"));
+            algorithms.algorithmAwithReduction(Algorithm.FlightOrderingMethod.OST, "DISTANCE");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmA-3", "ODT", "FIFO"));
+            algorithms.algorithmAwithReduction(Algorithm.FlightOrderingMethod.ODT, "FIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmA-3", "ODT", "LIFO"));
+            algorithms.algorithmAwithReduction(Algorithm.FlightOrderingMethod.ODT, "LIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmA-3", "ODT", "DISTANCE"));
+            algorithms.algorithmAwithReduction(Algorithm.FlightOrderingMethod.ODT, "DISTANCE");
+            algorithms.getWriter().close();
+            
+            
+            algorithms.setWriter(getBufferedWriter("AlgorithmB-3", "OST", "FIFO"));
+            algorithms.algorithmBwithReduction(Algorithm.FlightOrderingMethod.OST, "FIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmB-3", "OST", "LIFO"));
+            algorithms.algorithmBwithReduction(Algorithm.FlightOrderingMethod.OST, "LIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmB-3", "OST", "DISTANCE"));
+            algorithms.algorithmBwithReduction(Algorithm.FlightOrderingMethod.OST, "DISTANCE");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmB-3", "ODT", "FIFO"));
+            algorithms.algorithmBwithReduction(Algorithm.FlightOrderingMethod.ODT, "FIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmB-3", "ODT", "LIFO"));
+            algorithms.algorithmBwithReduction(Algorithm.FlightOrderingMethod.ODT, "LIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmB-3", "ODT", "DISTANCE"));
+            algorithms.algorithmBwithReduction(Algorithm.FlightOrderingMethod.ODT, "DISTANCE");
+            algorithms.getWriter().close();
+
+            
+            algorithms.setWriter(getBufferedWriter("AlgorithmC-3", "OST", "FIFO"));
+            algorithms.algorithmCwithReduction(Algorithm.FlightOrderingMethod.OST, "FIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmC-3", "OST", "LIFO"));
+            algorithms.algorithmCwithReduction(Algorithm.FlightOrderingMethod.OST, "LIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmC-3", "OST", "DISTANCE"));
+            algorithms.algorithmCwithReduction(Algorithm.FlightOrderingMethod.OST, "DISTANCE");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmC-3", "ODT", "FIFO"));
+            algorithms.algorithmCwithReduction(Algorithm.FlightOrderingMethod.ODT, "FIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmC-3", "ODT", "LIFO"));
+            algorithms.algorithmCwithReduction(Algorithm.FlightOrderingMethod.ODT, "LIFO");
+            algorithms.getWriter().close();
+            algorithms.setWriter(getBufferedWriter("AlgorithmC-3", "ODT", "DISTANCE"));
+            algorithms.algorithmCwithReduction(Algorithm.FlightOrderingMethod.ODT, "DISTANCE");
+            algorithms.getWriter().close();
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
         // System.out.print(2);
+    }
+
+    private static BufferedWriter getBufferedWriter(String algoName, String orderingMethod, String assignMethod) throws FileNotFoundException {
+        File csv = new File("C:\\Users\\Usuario\\Documents\\Bachelorarbeit\\Bachelor\\algorithmResults\\"+algoName + "_" + orderingMethod + "_" + assignMethod + ".csv");
+        FileOutputStream fos = new FileOutputStream(csv);
+        return new BufferedWriter(new OutputStreamWriter(fos));
     }
 }

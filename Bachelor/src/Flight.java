@@ -1,7 +1,5 @@
 import java.sql.Time;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Timer;
 
 
 //definicion de las flugeigenschaften
@@ -19,8 +17,8 @@ public class Flight {
     public Time stt;
     public Time tj;//target starting service time
     public int pierId;
-    public double X;
-    public double Y;
+    public double x;
+    public double y;
 
 
     //constructor para los flights
@@ -41,8 +39,8 @@ public class Flight {
         this.stt = stt;
         this.tj = tj;
 
-        this.X = x;
-        this.Y = y;
+        this.x = x;
+        this.y = y;
         this.pierId = pierId;
     }
 }

@@ -14,6 +14,9 @@ public class Algorithm {
     public ArrayList<Flight> listOfFlights;
     ArrayList<Pier> listOfPier = new ArrayList<Pier>();
     public int instance;
+    public String algoName;
+    public String flightOrderingMethod;
+    public String assignMethod;
 
 
     private BufferedWriter writer;
@@ -28,6 +31,10 @@ public class Algorithm {
             try {
                 //write Headline
                 writer.write("Instance;" +
+                        "# SS;" +
+                        "Algorithm;" +
+                        "FOM;" +
+                        "SS-Prio;" +
                         "FlightID;" +
                         "Date;" +
                         "Flight X-Coordinate;" +
@@ -64,8 +71,8 @@ public class Algorithm {
 
 
 
-    public Algorithm(ArrayList<SortingStation> listOfStation, ArrayList<Flight> listOfFlights, ArrayList<Pier> listOfPier, int instance) {
-        this.listOfStation = listOfStation;
+    public Algorithm(ArrayList<SortingStation> listOfStations, ArrayList<Flight> listOfFlights, ArrayList<Pier> listOfPier, int instance) {
+        this.listOfStation = listOfStations;
         this.listOfFlights = listOfFlights;
         this.listOfPier = listOfPier;
         this.instance = instance;
@@ -140,7 +147,6 @@ public class Algorithm {
                 default:
                     currentStation = getNearestStation(notOccupied, aFlight);
                     distance = distFrom((int) currentStation.x, (int) currentStation.y, (int) aFlight.x, (int) aFlight.y);
-                    System.out.println("\n Distance in m: " + distance);
 
                     break;
             }
@@ -178,6 +184,10 @@ public class Algorithm {
         if (this.writer != null) {
             try {
                 this.writer.write(this.instance + ";"
+                        + listOfStation.size() + ";"
+                        + algoName + ";"
+                        + flightOrderingMethod + ";"
+                        + assignMethod +";"
                         + aFlight.id + ";"
                         + sdf_datum.format(aFlight.datum) + ";"
                         + aFlight.x + ";"
@@ -218,10 +228,10 @@ public class Algorithm {
         ArrayList<Flight> flightsForForeignPier = new ArrayList<>();
         ArrayList<Flight> unmatchingFlights = new ArrayList<>();
 
-        System.out.println("Algorithm A: ");
+        
         //instance auswaehlen
         listOfFlights.removeIf(s -> s.instanceNummer != this.instance);
-        System.out.println("Anzahl Fluege in Instanz: " + listOfFlights.size());
+        
 
         //sorting flight list according sort method
         sortFlightList(orderMethod, allFlights);
@@ -248,7 +258,7 @@ public class Algorithm {
             }
             List<SortingStation> notOccupied = ssOnOwnPier.stream().filter(p -> !p.occupied).collect(Collectors.toList());
             if (notOccupied.size() != 0) {
-                System.out.print("\n\n Match on own Pier without buffer red");
+                
 
                 assignFlight(assignMethod, resultSet, aFlight, notOccupied);
                 continue;
@@ -266,7 +276,7 @@ public class Algorithm {
             notOccupied = ssOnOwnPier.stream().filter(p -> !p.occupied).collect(Collectors.toList());
 
             if (notOccupied.size() != 0) {
-                System.out.print("\n\n Match on own Pier with buffer red");
+                
 
                 assignFlight(assignMethod, resultSet, aFlight, notOccupied);
 
@@ -291,7 +301,7 @@ public class Algorithm {
             }
             List<SortingStation> notOccupied = ssOnForeignPier.stream().filter(p -> !p.occupied).collect(Collectors.toList());
             if (notOccupied.size() != 0) {
-                System.out.print("\n\n Match on foreign Pier without buffer red");
+                
                 assignFlight(assignMethod, resultSet, aFlight, notOccupied);
                 continue;
 
@@ -306,7 +316,7 @@ public class Algorithm {
             notOccupied = ssOnForeignPier.stream().filter(p -> !p.occupied).collect(Collectors.toList());
 
             if (notOccupied.size() != 0) {
-                System.out.print("\n\n Match on foreign Pier with buffer red");
+                
 
                 assignFlight(assignMethod, resultSet, aFlight, notOccupied);
                 continue;
@@ -318,7 +328,7 @@ public class Algorithm {
 
 
         }
-        System.out.println("unmatched Flights: " + unmatchingFlights.size());
+        
         return resultSet;
     }
 
@@ -331,10 +341,10 @@ public class Algorithm {
         ArrayList<Flight> flightsForForeignPier = new ArrayList<>();
         ArrayList<Flight> unmatchingFlights = new ArrayList<>();
 
-        System.out.println("Algorithm A: ");
+        
         //instance auswaehlen
         listOfFlights.removeIf(s -> s.instanceNummer != this.instance);
-        System.out.println("Anzahl Fluege in Instanz: " + listOfFlights.size());
+        
 
         //sorting flight list according sort method
         sortFlightList(orderMethod, allFlights);
@@ -360,7 +370,7 @@ public class Algorithm {
             }
             List<SortingStation> notOccupied = ssOnOwnPier.stream().filter(p -> !p.occupied).collect(Collectors.toList());
             if (notOccupied.size() != 0) {
-                System.out.print("\n\n Match on own Pier without buffer red");
+                
 
                 assignFlight(assignMethod, resultSet, aFlight, notOccupied);
                 continue;
@@ -385,7 +395,7 @@ public class Algorithm {
             }
             List<SortingStation> notOccupied = ssOnForeignPier.stream().filter(p -> !p.occupied).collect(Collectors.toList());
             if (notOccupied.size() != 0) {
-                System.out.print("\n\n Match on foreign Pier without buffer red");
+                
                 assignFlight(assignMethod, resultSet, aFlight, notOccupied);
                 continue;
 
@@ -395,7 +405,7 @@ public class Algorithm {
             assignFlight(assignMethod, null, aFlight, notOccupied);
 
         }
-        System.out.println("unmatched Flights: " + unmatchingFlights.size());
+        
         return resultSet;
     }
 
@@ -407,10 +417,10 @@ public class Algorithm {
         ArrayList<Flight> flightsForForeignPier = new ArrayList<>();
         ArrayList<Flight> unmatchingFlights = new ArrayList<>();
 
-        System.out.println("Algorithm A: ");
+        
         //instance auswaehlen
         listOfFlights.removeIf(s -> s.instanceNummer != this.instance);
-        System.out.println("Anzahl Fluege in Instanz: " + listOfFlights.size());
+        
 
         //sorting flight list according sort method
         sortFlightList(orderMethod, allFlights);
@@ -437,7 +447,7 @@ public class Algorithm {
             }
             List<SortingStation> notOccupied = ssOnOwnPier.stream().filter(p -> !p.occupied).collect(Collectors.toList());
             if (notOccupied.size() != 0) {
-                System.out.print("\n\n Match on own Pier without buffer red");
+                
 
                 assignFlight(assignMethod, resultSet, aFlight, notOccupied);
                 continue;
@@ -462,7 +472,7 @@ public class Algorithm {
             }
             List<SortingStation> notOccupied = ssOnForeignPier.stream().filter(p -> !p.occupied).collect(Collectors.toList());
             if (notOccupied.size() != 0) {
-                System.out.print("\n\n Match on foreign Pier without buffer red");
+                
                 assignFlight(assignMethod, resultSet, aFlight, notOccupied);
                 continue;
 
@@ -472,7 +482,7 @@ public class Algorithm {
             assignFlight(assignMethod, null, aFlight, notOccupied);
 
         }
-        System.out.println("unmatched Flights: " + unmatchingFlights.size());
+        
         return resultSet;
     }
 
@@ -483,10 +493,10 @@ public class Algorithm {
         ArrayList<Flight> allFlights = new ArrayList<>(this.listOfFlights);
         ArrayList<Flight> unmatchingFlights = new ArrayList<>();
 
-        System.out.println("Algorithm B: ");
+        
         //instance auswaehlen
         listOfFlights.removeIf(s -> s.instanceNummer != this.instance);
-        System.out.println("Anzahl Fluege in Instanz: " + listOfFlights.size());
+        
 
         //sorting flight list according sort method
         sortFlightList(orderMethod, allFlights);
@@ -513,7 +523,7 @@ public class Algorithm {
             }
             List<SortingStation> notOccupied = ssOnOwnPier.stream().filter(p -> !p.occupied).collect(Collectors.toList());
             if (notOccupied.size() != 0) {
-                System.out.print("\n\n Match on own Pier without buffer red");
+                
 
                 assignFlight(assignMethod, resultSet, aFlight, notOccupied);
                 continue;
@@ -530,7 +540,7 @@ public class Algorithm {
             notOccupied = ssOnOwnPier.stream().filter(p -> !p.occupied).collect(Collectors.toList());
 
             if (notOccupied.size() != 0) {
-                System.out.print("\n\n Match on own Pier with buffer red");
+                
 
                 assignFlight(assignMethod, resultSet, aFlight, notOccupied);
 
@@ -550,7 +560,7 @@ public class Algorithm {
             }
             notOccupied = ssOnForeignPier.stream().filter(p -> !p.occupied).collect(Collectors.toList());
             if (notOccupied.size() != 0) {
-                System.out.print("\n\n Match on foreign Pier without buffer red");
+                
                 assignFlight(assignMethod, resultSet, aFlight, notOccupied);
                 continue;
 
@@ -573,7 +583,7 @@ public class Algorithm {
 
 
         }
-        System.out.println("unmatched Flights: " + unmatchingFlights.size());
+        
         return resultSet;
 
     }
@@ -599,10 +609,10 @@ public class Algorithm {
         ArrayList<Flight> allFlights = new ArrayList<>(this.listOfFlights);
         ArrayList<Flight> unmatchingFlights = new ArrayList<>();
 
-        System.out.println("Algorithm C: ");
+        
         //instance auswaehlen
         listOfFlights.removeIf(s -> s.instanceNummer != this.instance);
-        System.out.println("Anzahl Fluege in Instanz: " + listOfFlights.size());
+        
 
         //sorting flight list according sort method
         sortFlightList(orderMethod, allFlights);
@@ -627,7 +637,7 @@ public class Algorithm {
             }
             List<SortingStation> notOccupied = allStations.stream().filter(p -> !p.occupied).collect(Collectors.toList());
             if (notOccupied.size() != 0) {
-                System.out.print("\n\n Match on any Pier without buffer red");
+                
 
                 assignFlight(assignMethod, resultSet, aFlight, notOccupied);
                 continue;
@@ -644,7 +654,7 @@ public class Algorithm {
             notOccupied = allStations.stream().filter(p -> !p.occupied).collect(Collectors.toList());
 
             if (notOccupied.size() != 0) {
-                System.out.print("\n\n Match on any Pier with buffer red");
+                
 
                 assignFlight(assignMethod, resultSet, aFlight, notOccupied);
 
@@ -656,7 +666,7 @@ public class Algorithm {
 
 
         }
-        System.out.println("unmatched Flights: " + unmatchingFlights.size());
+        
         return resultSet;
 
     }
@@ -668,10 +678,10 @@ public class Algorithm {
         ArrayList<Flight> allFlights = new ArrayList<>(this.listOfFlights);
         ArrayList<Flight> unmatchingFlights = new ArrayList<>();
 
-        System.out.println("Algorithm C: ");
+        
         //instance auswaehlen
         listOfFlights.removeIf(s -> s.instanceNummer != this.instance);
-        System.out.println("Anzahl Fluege in Instanz: " + listOfFlights.size());
+        
 
         //sorting flight list according sort method
         sortFlightList(orderMethod, allFlights);
@@ -696,7 +706,7 @@ public class Algorithm {
             }
             List<SortingStation> notOccupied = allStations.stream().filter(p -> !p.occupied).collect(Collectors.toList());
             if (notOccupied.size() != 0) {
-                System.out.print("\n\n Match on any Pier without buffer red");
+                
 
                 assignFlight(assignMethod, resultSet, aFlight, notOccupied);
                 continue;
@@ -708,7 +718,7 @@ public class Algorithm {
 
 
         }
-        System.out.println("unmatched Flights: " + unmatchingFlights.size());
+        
         return resultSet;
 
     }
@@ -719,10 +729,10 @@ public class Algorithm {
         ArrayList<Flight> allFlights = new ArrayList<>(this.listOfFlights);
         ArrayList<Flight> unmatchingFlights = new ArrayList<>();
 
-        System.out.println("Algorithm C: ");
+        
         //instance auswaehlen
         listOfFlights.removeIf(s -> s.instanceNummer != this.instance);
-        System.out.println("Anzahl Fluege in Instanz: " + listOfFlights.size());
+        
 
         //sorting flight list according sort method
         sortFlightList(orderMethod, allFlights);
@@ -747,7 +757,7 @@ public class Algorithm {
             List<SortingStation> notOccupied = allStations.stream().filter(p -> !p.occupied).collect(Collectors.toList());
 
             if (notOccupied.size() != 0) {
-                System.out.print("\n\n Match on any Pier with buffer red");
+                
 
                 assignFlight(assignMethod, resultSet, aFlight, notOccupied);
 
@@ -759,7 +769,7 @@ public class Algorithm {
 
 
         }
-        System.out.println("unmatched Flights: " + unmatchingFlights.size());
+        
         return resultSet;
 
     }
@@ -773,10 +783,10 @@ public class Algorithm {
         ArrayList<Flight> allFlights = new ArrayList<>(this.listOfFlights);
         ArrayList<Flight> unmatchingFlights = new ArrayList<>();
 
-        System.out.println("Algorithm B: ");
+        
         //instance auswaehlen
         listOfFlights.removeIf(s -> s.instanceNummer != this.instance);
-        System.out.println("Anzahl Fluege in Instanz: " + listOfFlights.size());
+        
 
         //sorting flight list according sort method
         sortFlightList(orderMethod, allFlights);
@@ -808,7 +818,7 @@ public class Algorithm {
             }
             List<SortingStation> notOccupied = ssOnOwnPier.stream().filter(p -> !p.occupied).collect(Collectors.toList());
             if (notOccupied.size() != 0) {
-                System.out.print("\n\n Match on own Pier without buffer red");
+                
 
                 assignFlight(assignMethod, resultSet, aFlight, notOccupied);
                 continue;
@@ -833,7 +843,7 @@ public class Algorithm {
             }
             notOccupied = ssOnForeignPier.stream().filter(p -> !p.occupied).collect(Collectors.toList());
             if (notOccupied.size() != 0) {
-                System.out.print("\n\n Match on foreign Pier without buffer red");
+                
                 assignFlight(assignMethod, resultSet, aFlight, notOccupied);
                 continue;
 
@@ -843,7 +853,7 @@ public class Algorithm {
 
 
         }
-        System.out.println("unmatched Flights: " + unmatchingFlights.size());
+        
         return resultSet;
 
     }
@@ -856,10 +866,10 @@ public class Algorithm {
         ArrayList<Flight> allFlights = new ArrayList<>(this.listOfFlights);
         ArrayList<Flight> unmatchingFlights = new ArrayList<>();
 
-        System.out.println("Algorithm B: ");
+        
         //instance auswaehlen
         listOfFlights.removeIf(s -> s.instanceNummer != this.instance);
-        System.out.println("Anzahl Fluege in Instanz: " + listOfFlights.size());
+        
 
         //sorting flight list according sort method
         sortFlightList(orderMethod, allFlights);
@@ -892,7 +902,7 @@ public class Algorithm {
 
             List<SortingStation> notOccupied = ssOnOwnPier.stream().filter(p -> !p.occupied).collect(Collectors.toList());
             if (notOccupied.size() != 0) {
-                System.out.print("\n\n Match on own Pier without buffer red");
+                
 
                 assignFlight(assignMethod, resultSet, aFlight, notOccupied);
                 continue;
@@ -909,7 +919,7 @@ public class Algorithm {
             }
             notOccupied = ssOnForeignPier.stream().filter(p -> !p.occupied).collect(Collectors.toList());
             if (notOccupied.size() != 0) {
-                System.out.print("\n\n Match on foreign Pier without buffer red");
+                
                 assignFlight(assignMethod, resultSet, aFlight, notOccupied);
                 continue;
 
@@ -926,7 +936,7 @@ public class Algorithm {
             notOccupied = ssOnOwnPier.stream().filter(p -> !p.occupied).collect(Collectors.toList());
 
             if (notOccupied.size() != 0) {
-                System.out.print("\n\n Match on own Pier with buffer red");
+                
 
                 assignFlight(assignMethod, resultSet, aFlight, notOccupied);
 
@@ -954,7 +964,7 @@ public class Algorithm {
 
 
         }
-        System.out.println("unmatched Flights: " + unmatchingFlights.size());
+        
         return resultSet;
 
     }
@@ -968,10 +978,10 @@ public class Algorithm {
         ArrayList<Flight> flightsForForeignPier = new ArrayList<>();
         ArrayList<Flight> unmatchingFlights = new ArrayList<>();
 
-        System.out.println("Algorithm E: ");
+        
         //instance auswaehlen
         listOfFlights.removeIf(s -> s.instanceNummer != this.instance);
-        System.out.println("Anzahl Fluege in Instanz: " + listOfFlights.size());
+        
 
         //sorting flight list according sort method
         sortFlightList(orderMethod, allFlights);
@@ -1003,7 +1013,7 @@ public class Algorithm {
             List<SortingStation> notOccupied = ssOnOwnPier.stream().filter(p -> !p.occupied).collect(Collectors.toList());
 
             if (notOccupied.size() != 0) {
-                System.out.print("\n\n Match on own Pier without buffer red");
+                
 
                 assignFlight(assignMethod, resultSet, aFlight, notOccupied);
                 continue;
@@ -1019,7 +1029,7 @@ public class Algorithm {
             }
             notOccupied = ssOnForeignPier.stream().filter(p -> !p.occupied).collect(Collectors.toList());
             if (notOccupied.size() != 0) {
-                System.out.print("\n\n Match on foreign Pier without buffer red");
+                
                 assignFlight(assignMethod, resultSet, aFlight, notOccupied);
                 continue;
 
@@ -1052,7 +1062,7 @@ public class Algorithm {
             List<SortingStation> notOccupied = ssOnOwnPier.stream().filter(p -> !p.occupied).collect(Collectors.toList());
 
             if (notOccupied.size() != 0) {
-                System.out.print("\n\n Match on own Pier with buffer red");
+                
 
                 assignFlight(assignMethod, resultSet, aFlight, notOccupied);
 
@@ -1070,7 +1080,7 @@ public class Algorithm {
             notOccupied = ssOnForeignPier.stream().filter(p -> !p.occupied).collect(Collectors.toList());
 
             if (notOccupied.size() != 0) {
-                System.out.print("\n\n Match on foreign Pier with buffer red");
+                
 
                 assignFlight(assignMethod, resultSet, aFlight, notOccupied);
                 continue;
@@ -1081,7 +1091,7 @@ public class Algorithm {
 
 
         }
-        System.out.println("unmatched Flights: " + unmatchingFlights.size());
+        
         return resultSet;
     }
 

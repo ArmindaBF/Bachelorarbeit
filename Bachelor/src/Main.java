@@ -26,6 +26,8 @@ public class Main {
 
     //importar todos los datos
     public void readFromFileStationAndFlights(String ssURL) {
+        //At first, set following three lists as empty
+
         this.listOfSortingStations.clear();
         this.listOfFlight.clear();
         this.listOfPier.clear();
@@ -109,32 +111,34 @@ public class Main {
     public static void main(String[] args) {
         Main m = new Main();
 
-//        PrintStream out = null;
-//        try {
-//            out = new PrintStream(new FileOutputStream("log.txt"));
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//        System.setOut(out);
+
 
         try {
 
             algorithms = new Algorithm(m.listOfSortingStations, m.listOfFlight, m.listOfPier, instance);
-//        m.readFromFileStationAndFlights(STANDARDLOCATION_SS);
+
+            //get ABC and A23 B23 C23 separated files
+            m.ABCseparatedFiles();
+
+            // diferentes maneras de imprimir los datos
+            //Change here for your type of output
+
+            // -> activate this line for the following two!!
+            // m.readFromFileStationAndFlights(STANDARDLOCATION_SS);
 
             //m.allAlgorithmsInSeparateFiles();
             //m.allAlgorithmsInOneFile();
-            m.ABCseparatedFiles();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
 
-        // System.out.print(2);
     }
 
+        //for printing (no se usan todos a la vez, depende de lo que quiera imprimir)
     private void allAlgorithmsInSeparateFiles() throws IOException {
+
         algorithms.setWriter(getBufferedWriter("AlgorithmA", "OST", "FIFO"));
         algorithms.algorithmA(Algorithm.FlightOrderingMethod.OST, "FIFO");
         algorithms.getWriter().close();
@@ -372,17 +376,19 @@ public class Main {
     private void ABCseparatedFiles() throws IOException {
         for (int i = MIN_INSTANCE; i <= MAX_INSTANCE; i++) {
             algorithms.instance = i;
-            algorithms.setWriter(getBufferedWriter("nonABC_Instance_" + algorithms.instance, "AllFOM", "AllPrios"));
 
+            //start new file for current instance
+            algorithms.setWriter(getBufferedWriter("nonABC_Instance_" + algorithms.instance, "AllFOM", "AllPrios"));
             for (int j = MIN_STATIONS; j <= MAX_STATIONS; j++) {
                 System.out.println("Start file " + j + " on instance " + i + "...");
-                readFromFileStationAndFlights("C:\\Users\\Usuario\\Desktop\\Bachelorarbeit UNI 09.08.2016\\Daten 22.07.16\\SS\\CSV\\" + j + " SS.csv");
+                readFromFileStationAndFlights("C:\\Users\\Usuario\\Documents\\Bachelorarbeit\\Bachelor\\CSV\\" + j + " SS.csv");
                 algorithms.listOfStation = this.listOfSortingStations;
                 algorithms.listOfFlights = this.listOfFlight;
                 algorithms.listOfPier = this.listOfPier;
                 writeAlgosNotABC();
+                //allAlgorithmsInSeparateFiles();
             }
-
+            //finish file for current instance
             algorithms.getWriter().close();
         }
 
@@ -402,7 +408,6 @@ public class Main {
             algorithms.getWriter().close();
         }
     }
-
 
     private static void writeAlgosABC() {
         setAlgoData("AlgorithmA", "OST", "FIFO");
@@ -576,7 +581,6 @@ public class Main {
         setAlgoData("AlgorithmC-3", "ODT", "DISTANCE");
         algorithms.algorithmCwithReduction(Algorithm.FlightOrderingMethod.ODT, "DISTANCE");
     }
-
 
     private static void writeAlgos() {
         setAlgoData("AlgorithmA", "OST", "FIFO");
@@ -788,17 +792,19 @@ public class Main {
         algorithms.algorithmCwithReduction(Algorithm.FlightOrderingMethod.ODT, "DISTANCE");
     }
 
+    //this is needed for the first three columns
     private static void setAlgoData(String algoName, String fom, String assignMethod) {
-        algorithms.algoName = algoName;
+        algorithms.currentAlgorithm = algoName;
         algorithms.flightOrderingMethod = fom;
         algorithms.assignMethod = assignMethod;
     }
 
-    ;
+
+    //this method creates a writer for writing into a file --> exportiert alles
 
     private static BufferedWriter getBufferedWriter(String algoName, String orderingMethod, String assignMethod) throws FileNotFoundException {
         setAlgoData(algoName, orderingMethod, assignMethod);
-        File csv = new File("C:\\Users\\Usuario\\Documents\\Bachelorarbeit\\Bachelor\\algorithmResults\\" + algoName + "_" + orderingMethod + "_" + assignMethod + ".csv");
+        File csv = new File("C:\\Users\\Usuario\\Documents\\Bachelorarbeit\\Bachelor\\algorithmResults-Separated\\" + algoName + "_" + orderingMethod + "_" + assignMethod + ".csv");
         FileOutputStream fos = new FileOutputStream(csv);
         return new BufferedWriter(new OutputStreamWriter(fos));
     }

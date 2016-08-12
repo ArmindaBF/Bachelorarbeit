@@ -10,8 +10,8 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 public class Main {
-    public static final int MIN_STATIONS = 12;
-    public static final int MAX_STATIONS = 54;
+    public static final int MIN_STATIONS = 81;
+    public static final int MAX_STATIONS = 120;
 
     public static final int MIN_INSTANCE = 7;
     public static final int MAX_INSTANCE = 11;
@@ -398,7 +398,7 @@ public class Main {
 
             for (int j = MIN_STATIONS; j <= MAX_STATIONS; j++) {
                 System.out.println("Start file " + j + " on instance " + i + "...");
-                readFromFileStationAndFlights("C:\\Users\\Usuario\\Desktop\\Bachelorarbeit UNI 09.08.2016\\Daten 22.07.16\\SS\\CSV\\" + j + " SS.csv");
+                readFromFileStationAndFlights("C:\\Users\\Usuario\\Documents\\Bachelorarbeit\\Bachelor\\CSV\\" + j + " SS.csv");
                 algorithms.listOfStation = this.listOfSortingStations;
                 algorithms.listOfFlights = this.listOfFlight;
                 algorithms.listOfPier = this.listOfPier;

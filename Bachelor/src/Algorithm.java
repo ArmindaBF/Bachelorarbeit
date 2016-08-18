@@ -71,13 +71,8 @@ public class Algorithm {
 
 
 
-    /**
-     *  Constructor for Algorithm, filling data from Main
-     * @param listOfStations
-     * @param listOfFlights
-     * @param listOfPier
-     * @param instance
-     */
+
+    //Constructor for Algorithms, filling data from Main
     public Algorithm(ArrayList<SortingStation> listOfStations, ArrayList<Flight> listOfFlights, ArrayList<Pier> listOfPier, int instance) {
         this.listOfStation = listOfStations;
         this.listOfFlights = listOfFlights;
@@ -89,8 +84,8 @@ public class Algorithm {
 
     //algorithm A : First try to assign on own peer -> first without then with time reduction
     //then switch to foreign peers, try to assign all yet unassigned flights without then with time reduction (two separate lists)
-    public ArrayList<Result> algorithmA(FlightOrderingMethod orderMethod, String assignMethod) {
-        ArrayList<Result> resultSet = new ArrayList<>();
+    public void algorithmA(FlightOrderingMethod orderMethod, String assignMethod) {
+        
         ArrayList<Flight> flightsForForeignPier = new ArrayList<>();
         ArrayList<Flight> unmatchingFlights = new ArrayList<>();
 
@@ -99,14 +94,14 @@ public class Algorithm {
         listOfFlights.removeIf(s -> s.instanceNummer != this.instance);
 
 
-        //sorting flight list according sort method
+        //sorting flight list according flight ordering method
         ArrayList<Flight> allFlights = sortFlightList(orderMethod, listOfFlights);
 
         LinkedList<SortingStation> currentStations = new LinkedList<>(this.listOfStation);
 
         //reset all stations to free and never used before
         for (SortingStation s : currentStations) {
-            // -36000000 -> Time-Bug 1 hour
+            // -36000000 -> Fallo de + de una hora
             s.freeAt = new Time(-3600000);
             s.occupied = false;
 
@@ -122,7 +117,6 @@ public class Algorithm {
                     .filter(p -> p.pierId == aFlight.pierId).collect(Collectors.toList());
 
             //compare each station on pier with own est and if est is after freeAt -> station is set to free
-            //let it gooo let it gooooooooooooooo!
 
             for (SortingStation ss : ssOnOwnPier) {
                 ss.occupied = ss.freeAt.getTime() > aFlight.est.getTime();
@@ -131,7 +125,7 @@ public class Algorithm {
             List<SortingStation> notOccupied = ssOnOwnPier.stream().filter(p -> !p.occupied).collect(Collectors.toList());
             //if there is at least one free station, assign the flight to it
             if (notOccupied.size() != 0) {
-                assignFlight(assignMethod, resultSet, aFlight, notOccupied);
+                assignFlight(assignMethod, aFlight, notOccupied);
                 //jump to next flight
                 continue;
 
@@ -148,7 +142,7 @@ public class Algorithm {
             notOccupied = ssOnOwnPier.stream().filter(p -> !p.occupied).collect(Collectors.toList());
 
             if (notOccupied.size() != 0) {
-                assignFlight(assignMethod, resultSet, aFlight, notOccupied);
+                assignFlight(assignMethod, aFlight, notOccupied);
 
             } else {
 
@@ -172,7 +166,7 @@ public class Algorithm {
             List<SortingStation> notOccupied = ssOnForeignPier.stream().filter(p -> !p.occupied).collect(Collectors.toList());
             if (notOccupied.size() != 0) {
 
-                assignFlight(assignMethod, resultSet, aFlight, notOccupied);
+                assignFlight(assignMethod, aFlight, notOccupied);
                 continue;
 
             }
@@ -188,24 +182,24 @@ public class Algorithm {
             if (notOccupied.size() != 0) {
 
 
-                assignFlight(assignMethod, resultSet, aFlight, notOccupied);
+                assignFlight(assignMethod, aFlight, notOccupied);
                 continue;
 
             }
             unmatchingFlights.add(aFlight);
-            assignFlight(assignMethod, null, aFlight, notOccupied);
+            assignFlight(assignMethod, aFlight, notOccupied);
 
 
         }
 
-        return resultSet;
+
     }
 
 
     //algorithm A-2 : First try to assign on own peer without time reduction
     //then switch to foreign peers, try to assign all yet unassigned flights without time reduction (two separate lists)
-    public ArrayList<Result> algorithmAwithoutReduction(FlightOrderingMethod orderMethod, String assignMethod) {
-        ArrayList<Result> resultSet = new ArrayList<>();
+    public void algorithmAwithoutReduction(FlightOrderingMethod orderMethod, String assignMethod) {
+        
         ArrayList<Flight> flightsForForeignPier = new ArrayList<>();
         ArrayList<Flight> unmatchingFlights = new ArrayList<>();
 
@@ -241,7 +235,7 @@ public class Algorithm {
             if (notOccupied.size() != 0) {
 
 
-                assignFlight(assignMethod, resultSet, aFlight, notOccupied);
+                assignFlight(assignMethod, aFlight, notOccupied);
                 continue;
 
             }
@@ -265,23 +259,22 @@ public class Algorithm {
             List<SortingStation> notOccupied = ssOnForeignPier.stream().filter(p -> !p.occupied).collect(Collectors.toList());
             if (notOccupied.size() != 0) {
 
-                assignFlight(assignMethod, resultSet, aFlight, notOccupied);
+                assignFlight(assignMethod, aFlight, notOccupied);
                 continue;
 
             }
 
             unmatchingFlights.add(aFlight);
-            assignFlight(assignMethod, null, aFlight, notOccupied);
+            assignFlight(assignMethod, aFlight, notOccupied);
 
         }
 
-        return resultSet;
     }
 
     //algorithm A-3 : First try to assign on own peer with time reduction
     //then switch to foreign peers, try to assign all yet unassigned flights with time reduction (two separate lists)
-    public ArrayList<Result> algorithmAwithReduction(FlightOrderingMethod orderMethod, String assignMethod) {
-        ArrayList<Result> resultSet = new ArrayList<>();
+    public void algorithmAwithReduction(FlightOrderingMethod orderMethod, String assignMethod) {
+        
         ArrayList<Flight> flightsForForeignPier = new ArrayList<>();
         ArrayList<Flight> unmatchingFlights = new ArrayList<>();
 
@@ -317,7 +310,7 @@ public class Algorithm {
             if (notOccupied.size() != 0) {
 
 
-                assignFlight(assignMethod, resultSet, aFlight, notOccupied);
+                assignFlight(assignMethod, aFlight, notOccupied);
                 continue;
 
             }
@@ -341,23 +334,22 @@ public class Algorithm {
             List<SortingStation> notOccupied = ssOnForeignPier.stream().filter(p -> !p.occupied).collect(Collectors.toList());
             if (notOccupied.size() != 0) {
 
-                assignFlight(assignMethod, resultSet, aFlight, notOccupied);
+                assignFlight(assignMethod, aFlight, notOccupied);
                 continue;
 
             }
 
             unmatchingFlights.add(aFlight);
-            assignFlight(assignMethod, null, aFlight, notOccupied);
+            assignFlight(assignMethod, aFlight, notOccupied);
 
         }
 
-        return resultSet;
     }
 
     //algorithm B : First try to assign on own peer -> first without then with time reduction
     //then switch to foreign peers, try to assign the flight without then with time reduction (each flight in one list)
-    public ArrayList<Result> algorithmB(FlightOrderingMethod orderMethod, String assignMethod) {
-        ArrayList<Result> resultSet = new ArrayList<>();
+    public void algorithmB(FlightOrderingMethod orderMethod, String assignMethod) {
+        
         ArrayList<Flight> unmatchingFlights = new ArrayList<>();
 
         //instance auswaehlen
@@ -391,7 +383,7 @@ public class Algorithm {
             if (notOccupied.size() != 0) {
 
 
-                assignFlight(assignMethod, resultSet, aFlight, notOccupied);
+                assignFlight(assignMethod, aFlight, notOccupied);
                 continue;
 
             }
@@ -408,7 +400,7 @@ public class Algorithm {
             if (notOccupied.size() != 0) {
 
 
-                assignFlight(assignMethod, resultSet, aFlight, notOccupied);
+                assignFlight(assignMethod, aFlight, notOccupied);
                 continue;
             }
 
@@ -425,7 +417,7 @@ public class Algorithm {
             notOccupied = ssOnForeignPier.stream().filter(p -> !p.occupied).collect(Collectors.toList());
             if (notOccupied.size() != 0) {
 
-                assignFlight(assignMethod, resultSet, aFlight, notOccupied);
+                assignFlight(assignMethod, aFlight, notOccupied);
                 continue;
 
             }
@@ -438,38 +430,38 @@ public class Algorithm {
 
             if (notOccupied.size() != 0) {
 
-                assignFlight(assignMethod, resultSet, aFlight, notOccupied);
+                assignFlight(assignMethod, aFlight, notOccupied);
                 continue;
 
             }
             unmatchingFlights.add(aFlight);
-            assignFlight(assignMethod, null, aFlight, notOccupied);
+            assignFlight(assignMethod, aFlight, notOccupied);
 
 
         }
 
-        return resultSet;
+
 
     }
 
 
     //Algorithm B-2: try to assign the flight WITHOUT any time reduction at first on own peer then foreign peer
-    public ArrayList<Result> algorithmBwithoutReduction(FlightOrderingMethod orderMethod, String assignMethod) {
+    public void algorithmBwithoutReduction(FlightOrderingMethod orderMethod, String assignMethod) {
 
-        return algorithmOnlyWithOrWithoutReduction(orderMethod, assignMethod, true);
+       algorithmOnlyWithOrWithoutReduction(orderMethod, assignMethod, true);
     }
 
 
     //Algorithm B-3: try to assign the flight WITH time reduction at first on own peer then foreign peer
-    public ArrayList<Result> algorithmBwithReduction(FlightOrderingMethod orderMethod, String assignMethod) {
+    public void algorithmBwithReduction(FlightOrderingMethod orderMethod, String assignMethod) {
 
-        return algorithmOnlyWithOrWithoutReduction(orderMethod, assignMethod, false);
+        algorithmOnlyWithOrWithoutReduction(orderMethod, assignMethod, false);
     }
 
 
     //algorithm C : First try to assign the flight on any peer without then with time reduction (each flight in one list)
-    public ArrayList<Result> algorithmC(FlightOrderingMethod orderMethod, String assignMethod) {
-        ArrayList<Result> resultSet = new ArrayList<>();
+    public void algorithmC(FlightOrderingMethod orderMethod, String assignMethod) {
+        
         ArrayList<Flight> unmatchingFlights = new ArrayList<>();
 
         //instance auswaehlen
@@ -503,7 +495,7 @@ public class Algorithm {
             if (notOccupied.size() != 0) {
 
 
-                assignFlight(assignMethod, resultSet, aFlight, notOccupied);
+                assignFlight(assignMethod, aFlight, notOccupied);
                 continue;
 
             }
@@ -520,25 +512,24 @@ public class Algorithm {
             if (notOccupied.size() != 0) {
 
 
-                assignFlight(assignMethod, resultSet, aFlight, notOccupied);
+                assignFlight(assignMethod, aFlight, notOccupied);
 
                 continue;
             }
 
             unmatchingFlights.add(aFlight);
-            assignFlight(assignMethod, null, aFlight, notOccupied);
+            assignFlight(assignMethod, aFlight, notOccupied);
 
 
         }
 
-        return resultSet;
 
     }
 
 
     //algorithm C-2 : Try to assign the flight on any peer WITHOUT time reduction (each flight in one list)
-    public ArrayList<Result> algorithmCwithoutReduction(FlightOrderingMethod orderMethod, String assignMethod) {
-        ArrayList<Result> resultSet = new ArrayList<>();
+    public void algorithmCwithoutReduction(FlightOrderingMethod orderMethod, String assignMethod) {
+        
         ArrayList<Flight> unmatchingFlights = new ArrayList<>();
 
         //instance auswaehlen
@@ -572,24 +563,23 @@ public class Algorithm {
             if (notOccupied.size() != 0) {
 
 
-                assignFlight(assignMethod, resultSet, aFlight, notOccupied);
+                assignFlight(assignMethod, aFlight, notOccupied);
                 continue;
 
             }
 
             unmatchingFlights.add(aFlight);
-            assignFlight(assignMethod, null, aFlight, notOccupied);
+            assignFlight(assignMethod, aFlight, notOccupied);
 
 
         }
 
-        return resultSet;
 
     }
 
     //algorithm C-3 : Try to assign the flight on any peer WITH time reduction (each flight in one list)
-    public ArrayList<Result> algorithmCwithReduction(FlightOrderingMethod orderMethod, String assignMethod) {
-        ArrayList<Result> resultSet = new ArrayList<>();
+    public void algorithmCwithReduction(FlightOrderingMethod orderMethod, String assignMethod) {
+        
         ArrayList<Flight> unmatchingFlights = new ArrayList<>();
 
         //instance auswaehlen
@@ -622,24 +612,23 @@ public class Algorithm {
             if (notOccupied.size() != 0) {
 
 
-                assignFlight(assignMethod, resultSet, aFlight, notOccupied);
+                assignFlight(assignMethod, aFlight, notOccupied);
 
                 continue;
             }
 
             unmatchingFlights.add(aFlight);
-            assignFlight(assignMethod, null, aFlight, notOccupied);
+            assignFlight(assignMethod, aFlight, notOccupied);
 
 
         }
 
-        return resultSet;
 
     }
 
 
-    public ArrayList<Result> algorithmOnlyWithOrWithoutReduction(FlightOrderingMethod orderMethod, String assignMethod, boolean without) {
-        ArrayList<Result> resultSet = new ArrayList<>();
+    public void algorithmOnlyWithOrWithoutReduction(FlightOrderingMethod orderMethod, String assignMethod, boolean without) {
+        
         ArrayList<Flight> unmatchingFlights = new ArrayList<>();
 
         //instance auswaehlen
@@ -679,7 +668,7 @@ public class Algorithm {
             if (notOccupied.size() != 0) {
 
 
-                assignFlight(assignMethod, resultSet, aFlight, notOccupied);
+                assignFlight(assignMethod, aFlight, notOccupied);
                 continue;
 
             }
@@ -703,25 +692,24 @@ public class Algorithm {
             notOccupied = ssOnForeignPier.stream().filter(p -> !p.occupied).collect(Collectors.toList());
             if (notOccupied.size() != 0) {
 
-                assignFlight(assignMethod, resultSet, aFlight, notOccupied);
+                assignFlight(assignMethod, aFlight, notOccupied);
                 continue;
 
             }
             unmatchingFlights.add(aFlight);
-            assignFlight(assignMethod, null, aFlight, notOccupied);
+            assignFlight(assignMethod, aFlight, notOccupied);
 
 
         }
 
-        return resultSet;
 
     }
 
 
     //Algorithm D: try to assign the flight at first to own then foreign WITHOUT any time reduction
     // then try to assign the flight at first to own then foreign WITH any time reduction (each flight in one list)
-    public ArrayList<Result> algorithmD(FlightOrderingMethod orderMethod, String assignMethod) {
-        ArrayList<Result> resultSet = new ArrayList<>();
+    public void algorithmD(FlightOrderingMethod orderMethod, String assignMethod) {
+        
         ArrayList<Flight> unmatchingFlights = new ArrayList<>();
 
         //instance auswaehlen
@@ -761,7 +749,7 @@ public class Algorithm {
             if (notOccupied.size() != 0) {
 
 
-                assignFlight(assignMethod, resultSet, aFlight, notOccupied);
+                assignFlight(assignMethod, aFlight, notOccupied);
                 continue;
 
             }
@@ -777,7 +765,7 @@ public class Algorithm {
             notOccupied = ssOnForeignPier.stream().filter(p -> !p.occupied).collect(Collectors.toList());
             if (notOccupied.size() != 0) {
 
-                assignFlight(assignMethod, resultSet, aFlight, notOccupied);
+                assignFlight(assignMethod, aFlight, notOccupied);
                 continue;
 
             }
@@ -795,7 +783,7 @@ public class Algorithm {
             if (notOccupied.size() != 0) {
 
 
-                assignFlight(assignMethod, resultSet, aFlight, notOccupied);
+                assignFlight(assignMethod, aFlight, notOccupied);
 
                 continue;
             }
@@ -812,25 +800,24 @@ public class Algorithm {
 
             if (notOccupied.size() != 0) {
 
-                assignFlight(assignMethod, resultSet, aFlight, notOccupied);
+                assignFlight(assignMethod, aFlight, notOccupied);
                 continue;
 
             }
             unmatchingFlights.add(aFlight);
-            assignFlight(assignMethod, null, aFlight, notOccupied);
+            assignFlight(assignMethod, aFlight, notOccupied);
 
 
         }
 
-        return resultSet;
 
     }
 
 
     //algorithm E : First try to assign without time reduction -> first own then foreign peer
     //then try to assign all yet unassigned flights with  time reduction -> first own then foreign peer (two separate lists)
-    public ArrayList<Result> algorithmE(FlightOrderingMethod orderMethod, String assignMethod) {
-        ArrayList<Result> resultSet = new ArrayList<>();
+    public void algorithmE(FlightOrderingMethod orderMethod, String assignMethod) {
+        
         ArrayList<Flight> flightsForForeignPier = new ArrayList<>();
         ArrayList<Flight> unmatchingFlights = new ArrayList<>();
 
@@ -869,7 +856,7 @@ public class Algorithm {
             if (notOccupied.size() != 0) {
 
 
-                assignFlight(assignMethod, resultSet, aFlight, notOccupied);
+                assignFlight(assignMethod, aFlight, notOccupied);
                 continue;
 
             }
@@ -884,7 +871,7 @@ public class Algorithm {
             notOccupied = ssOnForeignPier.stream().filter(p -> !p.occupied).collect(Collectors.toList());
             if (notOccupied.size() != 0) {
 
-                assignFlight(assignMethod, resultSet, aFlight, notOccupied);
+                assignFlight(assignMethod, aFlight, notOccupied);
                 continue;
 
             }
@@ -916,7 +903,7 @@ public class Algorithm {
             List<SortingStation> notOccupied = ssOnOwnPier.stream().filter(p -> !p.occupied).collect(Collectors.toList());
 
             if (notOccupied.size() != 0) {
-                assignFlight(assignMethod, resultSet, aFlight, notOccupied);
+                assignFlight(assignMethod, aFlight, notOccupied);
 
                 continue;
             }
@@ -934,42 +921,27 @@ public class Algorithm {
             if (notOccupied.size() != 0) {
 
 
-                assignFlight(assignMethod, resultSet, aFlight, notOccupied);
+                assignFlight(assignMethod, aFlight, notOccupied);
                 continue;
 
             }
             unmatchingFlights.add(aFlight);
-            assignFlight(assignMethod, null, aFlight, notOccupied);
+            assignFlight(assignMethod, aFlight, notOccupied);
 
 
         }
 
-        return resultSet;
     }
 
 
     private ArrayList<Flight> sortFlightList(FlightOrderingMethod a, ArrayList<Flight> list1) {
         if (FlightOrderingMethod.OST == a) {
-            //sort by ascending values of tj ... leeet it gooo!
+            //sort by ascending values of tj ...
             Collections.sort(list1, (p1, p2) -> p1.tj.compareTo(p2.tj));
         } else if (FlightOrderingMethod.ODT == a) {
             Collections.sort(list1, (p1, p2) -> p1.stt.compareTo(p2.stt) == 0 ? p1.tj.compareTo(p2.tj) : p1.stt.compareTo(p2.stt));
         }
         return list1;
-    }
-
-    private Result assignFlightToResult(ArrayList<Result> resultSet, Flight aFlight, SortingStation currentStation, Time freed) {
-        Result result = new Result();
-        result.setTheFlight(aFlight);
-        result.setTheStation(currentStation);
-        long r_j = 0;
-        if (freed.getTime() >= aFlight.est.getTime()) {
-            r_j = freed.getTime() - aFlight.est.getTime();
-        }
-        result.setR_j(r_j);
-
-        resultSet.add(result);
-        return result;
     }
 
     public static SortingStation getNearestStation(List<SortingStation> stations, Flight currentFlight) {
@@ -995,13 +967,13 @@ public class Algorithm {
     }
 
 
-    private void assignFlight(String assignMethod, ArrayList<Result> resultSet, Flight aFlight, List<SortingStation> notOccupied) {
+    private void assignFlight(String assignMethod, Flight aFlight, List<SortingStation> notOccupied) {
         SortingStation currentStation;
         Time freed;
         String time;
         String realStartTime;
         double distance = 0;
-        if (resultSet != null) {
+            if(notOccupied.size()>0){
             //Sort free stations according to the free-at Time
             Collections.sort(notOccupied, (p1, p2) -> p1.freeAt.compareTo(p2.freeAt) == 0 ? compareInts(p1, p2) : p1.freeAt.compareTo(p2.freeAt));
             //FIFO
@@ -1011,10 +983,11 @@ public class Algorithm {
                     currentStation = notOccupied.get(0);
                     break;
                 case "LIFO":
-                    //take the last uuunicoorn
+                    //take the last list element
                     currentStation = notOccupied.get(notOccupied.size() - 1);
                     break;
                 default:
+                    //Distance
                     //get the nearest station of all free stations
                     currentStation = getNearestStation(notOccupied, aFlight);
                     //return the exact distance value
@@ -1028,21 +1001,23 @@ public class Algorithm {
             //set new free at time
             currentStation.freeAt = aFlight.stt;
 
-            //collect values in a result object (not really necessary)
-            Result result = assignFlightToResult(resultSet, aFlight, currentStation, freed);
-
+            // calculate time reduction time
+            long r_j = 0;
+            if (freed.getTime() >= aFlight.est.getTime()) {
+                r_j = freed.getTime() - aFlight.est.getTime();
+            }
             //just formatting tom 00:00:00
             time = String.format("%02d:%02d:00",
-                    (int) ((result.getR_j() / (1000 * 60 * 60)) % 24),
-                    (int) ((result.getR_j() / (1000 * 60)) % 60)
+                    (int) ((r_j / (1000 * 60 * 60)) % 24),
+                    (int) ((r_j / (1000 * 60)) % 60)
             );
 
 
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-            long s_ij = aFlight.est.getTime() + result.getR_j();
+            long s_ij = aFlight.est.getTime() + r_j;
             realStartTime = sdf.format(s_ij);
 
-            // If flight nevr got to tenerife, we say that he has a dummy station
+            // If flight never got assigned, print "Never"
         } else {
             currentStation = new SortingStation(0, 0, 0, 0, new Time(-3600000));
             freed = new Time(-3600000);
@@ -1100,7 +1075,7 @@ public class Algorithm {
 
     }
 
-    //helpermethod haare glaetten
+    //helpermethod
     private int compareInts(SortingStation p1, SortingStation p2) {
         return p1.id > p2.id ? +1 : p1.id < p2.id ? -1 : 0;
     }
